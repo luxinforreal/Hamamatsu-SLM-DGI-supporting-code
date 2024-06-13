@@ -62,7 +62,7 @@ def main():
     pitch = 1
     
     # LCOS pixel resolution
-    x = 1272
+    x = 1280
     y = 1024
     
     # LCOS-SML monitor number setting 
