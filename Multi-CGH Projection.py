@@ -93,15 +93,45 @@ def displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRa
 # 示例用法
 directory = "path_to_your_bmp_images"  # 替换为你的BMP图像文件夹路径
 x = 1280  # 目标X维度像素数
-y = 1024   # 目标Y维度像素数
+y = 800   # 目标Y维度像素数
 monitorNo = 2  # LCOS显示器编号
-windowNo = 0  # 窗口编号
-xShift = 0  # X方向偏移量
-yShift = 0  # Y方向偏移量
-frameRate = 20  # 设定的帧率
+windowNo = 1  # 窗口编号
+xShift = 100  # X方向偏移量
+yShift = 100  # Y方向偏移量
+frameRate = 30  # 设定的帧率
 
 # 处理所有图像并生成CGH图像
 results = processMultipleImages(directory, x, y)
 
 # 按照帧率显示CGH图像
 displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRate)
+
+
+# import time
+
+# def display_images_with_frame_rate(images, frame_rate=30):
+#     """
+#     按照指定帧率显示图像序列。
+#     :param images: 处理后的图像数组列表
+#     :param frame_rate: 目标帧率（每秒帧数）
+#     """
+#     num_images = len(images)
+#     sleep_time = 1 / frame_rate  # 计算每帧之间的睡眠时间
+    
+#     for i, image_array in enumerate(images):
+#         print(f"Displaying image {i+1}/{num_images}")
+#         # 假设 image_array 是可以直接用于显示的格式
+#         showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, image_array)
+#         time.sleep(sleep_time)  # 控制帧率
+
+# # 在main函数末尾添加显示逻辑
+# if __name__ == "__main__":
+#     main_directory = "path_to_your_new_folder_with_1500_images"
+#     x, y = 1280, 800  # 或者根据实际情况调整
+#     results = processMultipleImages(main_directory, x, y)
+    
+#     # 假设处理过程成功，现在开始按帧率显示
+#     try:
+#         display_images_with_frame_rate(results, frame_rate=30)  # 假设帧率为30fps
+#     except KeyboardInterrupt:
+#         print("Display interrupted by user.")
