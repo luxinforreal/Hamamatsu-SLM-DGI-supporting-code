@@ -3,7 +3,7 @@ Descripttion: The Complete Code for SLM_DGI(Contains the testing code)
 version: 1.0
 Author: luxin
 Date: 2024-06-08 20:07:10
-LastEditTime: 2024-06-10 23:06:14
+LastEditTime: 2024-06-13 18:23:36
 '''
 from PIL import Image
 import numpy as np
@@ -239,6 +239,23 @@ def processImagesCombined(ref_path, num_images):
 
     return arr
 
+def processMultipleImages(directory, x, y):
+    results = []
+    for filename in os.listdir(directory):
+        if filename.endswith(".bmp"):
+            filepath = os.path.join(directory, filename)
+            image = Image.open(filepath)
+            imageWidth, imageHeight = image.size
+            outArray = (c_ubyte * (imageWidth * imageHeight))()
+            
+            print(f"Processing {filepath}...")
+            cgh_array = makeBmpArray(filepath, x, y, outArray)
+            
+            # 存储生成的CGH图像
+            results.append(cgh_array)
+        
+    return results
+
 
 '''ShowOn2ndDisplay:
     the function for showing on LCOS display
@@ -358,23 +375,29 @@ def main():
     self_farray = SELF_FARRAY(0)
     
     # -------- test1 - test the original basic function  -------
-    #Display CGH pattern from image file with using dll
-    filepath = "Target image sample\\char_hpk_128x128.bmp"
-    makeBmpArray(filepath, x, y, farray)
-    showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, farray)
+    #Display CGH pattern from image file  dll
+    # filepath = "Target image sample\\char_hpk_128x128.bmp"
+    # makeBmpArray(filepath, x, y, farray)
+    # showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, farray)
 
     # display image from file with dll
-    filepath = "D:\\python_project\\1024.bmp"
-    loadBmpArray(filepath, x, y, farray)
-    showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, farray)
+    # filepath = "D:\\python_project\\1024.bmp"
+    # loadBmpArray(filepath, x, y, farray)
+    # showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, farray)
     
     
-    # -------- test2 - test advanced fucntion for single projection  -------
-    num_image = 1
-    flatten_bmp = []
-    flatten_bmp = processImagesCombined("number_gradation_256x256.bmp", num_image)    
-    makeBmpArrayFromFlattenedArray(x, y, flatten_bmp[0])
-    loadBmpArrayFromFlattenedArray()
+    # -------- test2 - test advanced fucntion for single projection - old version-------
+    # num_image = 1
+    # flatten_bmp = []
+    # flatten_bmp = processImagesCombined("number_gradation_256x256.bmp", num_image)    
+    # makeBmpArrayFromFlattenedArray(x, y, flatten_bmp[0])
+    # loadBmpArrayFromFlattenedArray(x, y, farray)
+    
+    
+    # -------- test2 - test advanced fucntion for single projection - new version-------
+    result = processMultipleImages("test/test-folder-1-bmp", x, y)
+    showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, result)
+    
     
     # -------- test3 - test using for loop & projecting multi-images  -------
     
