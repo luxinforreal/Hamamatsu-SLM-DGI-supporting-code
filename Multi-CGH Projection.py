@@ -93,12 +93,12 @@ def displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRa
 # 示例用法
 directory = "path_to_your_bmp_images"  # 替换为你的BMP图像文件夹路径
 x = 1280  # 目标X维度像素数
-y = 800   # 目标Y维度像素数
+y = 1024   # 目标Y维度像素数
 monitorNo = 2  # LCOS显示器编号
-windowNo = 1  # 窗口编号
-xShift = 100  # X方向偏移量
-yShift = 100  # Y方向偏移量
-frameRate = 30  # 设定的帧率
+windowNo = 0  # 窗口编号
+xShift = 0  # X方向偏移量
+yShift = 0  # Y方向偏移量
+frameRate = 20  # 设定的帧率
 
 # 处理所有图像并生成CGH图像
 results = processMultipleImages(directory, x, y)
