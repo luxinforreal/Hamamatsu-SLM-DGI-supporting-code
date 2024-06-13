@@ -3,7 +3,7 @@ Descripttion: The Complete Code for SLM_DGI(Contains the testing code)
 version: 1.0
 Author: luxin
 Date: 2024-06-08 20:07:10
-LastEditTime: 2024-06-13 18:23:36
+LastEditTime: 2024-06-13 20:24:01
 '''
 from PIL import Image
 import numpy as np
@@ -345,13 +345,12 @@ def ghost_imaging(image_data, bucket, result_save_path, target, speckle_size, nu
 
 
 
-
 def main():
     # pixelpitch(0: 20um 1: 12.5um)
     pitch = 1
     
     # LCOS pixel resolution
-    x = 1272
+    x = 1280
     y = 1024
     
     # LCOS-SML monitor number setting 
@@ -375,7 +374,7 @@ def main():
     self_farray = SELF_FARRAY(0)
     
     # -------- test1 - test the original basic function  -------
-    #Display CGH pattern from image file  dll
+    # Display CGH pattern from image file  dll
     # filepath = "Target image sample\\char_hpk_128x128.bmp"
     # makeBmpArray(filepath, x, y, farray)
     # showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, farray)
