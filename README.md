@@ -1,9 +1,9 @@
 <!--
  * @Descripttion: README.md 
- * @version: 1.0
+ * @version: 2.0
  * @Author: luxin
  * @Date: 2024-06-10 23:10:25
- * @LastEditTime: 2024-06-13 20:29:17
+ * @LastEditTime: 2024-06-14 16:01:21
 -->
 # D:\Github\Hamamatsu SLM-DGI-supporting-code
 
@@ -28,3 +28,47 @@ test3.py
 4. 测试多张图像的投影 - 用自己的函数提前进行图像的flatten处理
 5. 测试多设备协同计算关联成像
 '''
+
+## Hints
+
+showOn2ndDisplay()函数中的
+```Window_Array_to_Display(array, x, y, windowNo, x*y)```
+中array传入的必须是C数组类型，也就是得有一个传入的类型必须是指针，通过代码上文中的```Window_Array_to_Display.argtypes = [c_void_p, c_int, c_int, c_int, c_int]```同样有定义c_void_p指的就是一个ctypes中的指针类型，应对后面函数不同的调用方式，有几种不同的解决方式
+
+1.在函数processMultipleImages中，如果调用计算的CGH的代码是：
+
+```java
+.....
+    outArray = (c_ubyte * (imageWidth * imageHeight))()
+    print(f"Processing {filepath}...")
+    cgh_array = makeBmpArray(filepath, x, y, outArray)
+            
+    # 存储生成的CGH图像
+    results.append(cgh_array)
+```
+
+那么对应的Windows_Array_to_Display()的内部表达式是：
+
+```java
+    Window_Array_to_Display(
+        ctypes.cast(array, ctypes.POINTER(ctypes.c_ubyte)),
+        x, y, windowNo, x*y)
+```
+
+2.在函数processMultipleImages中，如果调用计算的CGH的代码是：
+
+```java
+.....
+    outArray = (c_ubyte * (imageWidth * imageHeight))()
+    print(f"Processing {filepath}...")
+    cgh_array = makeBmpArray(filepath, x, y, outArray)
+            
+    # 存储生成的CGH图像
+    results.append(outArray)
+```
+
+那么对应的Windows_Array_to_Display()的内部表达式是：
+
+```java
+    Window_Array_to_Display(array.ctypes.data_as(ctypes.c_void_p), x, y, windowNo, x*y)
+```
