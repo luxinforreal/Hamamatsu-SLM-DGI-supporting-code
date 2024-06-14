@@ -1,3 +1,10 @@
+'''
+Descripttion: your project
+version: 1.0
+Author: luxin
+Date: 2024-06-14 15:35:51
+LastEditTime: 2024-06-14 16:27:40
+'''
 import os
 import time
 from PIL import Image
@@ -5,6 +12,7 @@ import numpy as np
 from ctypes import *
 import copy
 import ctypes
+from constants import Constants
 
 def makeBmpArray(filepath, x, y, outArray):
     im = Image.open(filepath)
@@ -16,8 +24,8 @@ def makeBmpArray(filepath, x, y, outArray):
         for j in range(imageHeight):
             outArray[i + imageWidth * j] = im_gray.getpixel((i, j)) 
 
-    # Lcoslib = windll.LoadLibrary("Image_Control.dll")  # 根据你的平台选择正确的LoadLibrary方法
-    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll") 
+    # Lcoslib = windll.LoadLibrary("Image_Control.dll")
+    Lcoslib = windll.LoadLibrary(Constants.DLL_PATH) 
     
     # Create CGH
     inArray = copy.deepcopy(outArray) 
@@ -41,7 +49,7 @@ def makeBmpArray(filepath, x, y, outArray):
     return np.array(outArray).reshape((imageHeight, imageWidth))
 
 def showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array):
-    Lcoslib = windll.LoadLibrary("Image_Control.dll")
+    Lcoslib = windll.LoadLibrary("Constants.DLL_PATH")
     
     # Select LCOS window
     Window_Settings = Lcoslib.Window_Settings
@@ -58,7 +66,7 @@ def showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array):
     
     return 0
 
-def processMultipleImages(directory, x, y):
+def processMultipleImages(directory, x, y, npy_stored_path):
     results = []
     for filename in os.listdir(directory):
         if filename.endswith(".bmp"):
@@ -70,14 +78,18 @@ def processMultipleImages(directory, x, y):
             print(f"Processing {filepath}...")
             cgh_array = makeBmpArray(filepath, x, y, outArray)
             
-            # 存储生成的CGH图像
+            # save as .npy
             results.append(cgh_array)
+            
+    results_npy = np.array(results)
+    np.save(npy_stored_path, results_npy)
+    print(f"CGH images saved to {npy_stored_path}")
         
     return results
 
 def displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRate):
     frameInterval = 1 / frameRate
-    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll")
+    Lcoslib = windll.LoadLibrary(Constants.DLL_PATH)
 
     for array in results:
         showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array)
@@ -93,20 +105,15 @@ def displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRa
     Window_Term(windowNo)
 
 
-# directory = "C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/test/test-folder-5-bmps" 
-# x = 1280  
-# y = 1024   
-# monitorNo = 2 
-# windowNo = 0  
-# xShift = 0  
-# yShift = 0  
-# frameRate = 1 
-
-# results = processMultipleImages(directory, x, y)
-# displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRate)
-
-
-# import time
+def loadCGHImages(npy_stored_path):
+    if os.path.exists(npy_stored_path):
+        cgh = np.load(npy_stored_path)
+        print(f"CGH images loaded from {npy_stored_path}")
+        return cgh
+    else:
+        print(f"File {npy_stored_path} does not exist.")
+        return None
+        
 
 def display_images_with_frame_rate(images, frame_rate=30):
     num_images = len(images)
@@ -118,9 +125,11 @@ def display_images_with_frame_rate(images, frame_rate=30):
         time.sleep(sleep_time)
         print(i + 1)
 
-# 在main函数末尾添加显示逻辑
+
 if __name__ == "__main__":
-    directory = "C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/test/test-folder-5-bmps" 
+    dll_path = Constants.DLL_PATH
+    bmp_origin_path = Constants.TEST_BMP_PATH_MULTIPLE
+    npy_stored_path = Constants.NPY_STORED_PATH
     x = 1280  
     y = 1024   
     monitorNo = 2 
@@ -128,8 +137,10 @@ if __name__ == "__main__":
     xShift = 0  
     yShift = 0  
     frameRate = 1 
-    results = processMultipleImages(directory, x, y)
-    
+    # results = processMultipleImages(bmp_origin_path, x, y)
+    results = loadCGHImages(npy_stored_path)
+    if results is None:
+        results = processMultipleImages(bmp_origin_path, x, y, npy_stored_path)
     
     try:
         display_images_with_frame_rate(results, frame_rate=1) 
