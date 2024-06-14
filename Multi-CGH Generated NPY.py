@@ -3,7 +3,7 @@ Descripttion: your project
 version: 1.0
 Author: luxin
 Date: 2024-06-14 15:35:51
-LastEditTime: 2024-06-14 16:27:40
+LastEditTime: 2024-06-14 17:01:42
 '''
 import os
 import time
@@ -66,11 +66,11 @@ def showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array):
     
     return 0
 
-def processMultipleImages(directory, x, y, npy_stored_path):
+def processMultipleImages(bmp_origin_path, x, y, npy_stored_path):
     results = []
-    for filename in os.listdir(directory):
+    for filename in os.listdir(bmp_origin_path):
         if filename.endswith(".bmp"):
-            filepath = os.path.join(directory, filename)
+            filepath = os.path.join(bmp_origin_path, filename)
             image = Image.open(filepath)
             imageWidth, imageHeight = image.size
             outArray = (c_ubyte * (imageWidth * imageHeight))()
@@ -115,7 +115,7 @@ def loadCGHImages(npy_stored_path):
         return None
         
 
-def display_images_with_frame_rate(images, frame_rate=30):
+def display_images_with_frame_rate(images, frame_rate):
     num_images = len(images)
     sleep_time = 1 / frame_rate
     
@@ -127,9 +127,14 @@ def display_images_with_frame_rate(images, frame_rate=30):
 
 
 if __name__ == "__main__":
+    
     dll_path = Constants.DLL_PATH
+    # dll_path = "C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll"
     bmp_origin_path = Constants.TEST_BMP_PATH_MULTIPLE
+    # bmp_origin_path = "D:/Github/Hamamatsu-SLM-DGI-supporting-code/test/test-folder-5-bmps"
     npy_stored_path = Constants.NPY_STORED_PATH
+    # npy_stored_path = "D:/Speckle Patterns/Mathiue-npy"
+    
     x = 1280  
     y = 1024   
     monitorNo = 2 
@@ -137,12 +142,13 @@ if __name__ == "__main__":
     xShift = 0  
     yShift = 0  
     frameRate = 1 
+    
     # results = processMultipleImages(bmp_origin_path, x, y)
     results = loadCGHImages(npy_stored_path)
     if results is None:
         results = processMultipleImages(bmp_origin_path, x, y, npy_stored_path)
     
     try:
-        display_images_with_frame_rate(results, frame_rate=1) 
+        display_images_with_frame_rate(results, frameRate) 
     except KeyboardInterrupt:
         print("Display interrupted by user.")
