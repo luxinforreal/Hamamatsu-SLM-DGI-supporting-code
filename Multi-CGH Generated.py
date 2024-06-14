@@ -3,6 +3,34 @@ from PIL import Image
 import numpy as np
 from ctypes import *
 import copy
+import ctypes
+
+
+def showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array):
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll")
+
+    # Select LCOS window
+    Window_Settings = Lcoslib.Window_Settings
+    Window_Settings.argtypes = [c_int, c_int, c_int, c_int]
+    Window_Settings.restype = c_int
+    Window_Settings(monitorNo, windowNo, xShift, yShift)
+
+    # Show pattern
+    Window_Array_to_Display = Lcoslib.Window_Array_to_Display
+    Window_Array_to_Display.argtypes = [c_void_p, c_int, c_int, c_int, c_int]
+    Window_Array_to_Display.restype = c_int
+    Window_Array_to_Display(array.ctypes.data_as(ctypes.c_void_p), x, y, windowNo, x * y)
+
+    # wait until enter key input
+    input("please input enter key...")
+
+    # close the window
+    Window_Term = Lcoslib.Window_Term
+    Window_Term.argtyes = [c_int]
+    Window_Term.restype = c_int
+    Window_Term(windowNo)
+
+    return 0
 
 def makeBmpArray(filepath, x, y, outArray):
     im = Image.open(filepath)
@@ -15,7 +43,8 @@ def makeBmpArray(filepath, x, y, outArray):
             outArray[i + imageWidth * j] = im_gray.getpixel((i, j)) 
 
     # Lcoslib = windll.LoadLibrary("Image_Control.dll")  # 根据你的平台选择正确的LoadLibrary方法
-    Lcoslib = windll.LoadLibrary("Image_Control.dll") 
+    folder_path = "C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll"
+    Lcoslib = windll.LoadLibrary(folder_path) 
     
     # Create CGH
     inArray = copy.deepcopy(outArray) 
@@ -52,6 +81,9 @@ def processMultipleImages(directory, x, y):
             
             # 存储生成的CGH图像
             results.append(cgh_array)
+            
+    for i, result in enumerate(results):
+        print(f"Processed image {i+1}, output array shape: {result.shape}")
         
     return results
 
@@ -62,7 +94,7 @@ def main():
     pitch = 1
     
     # LCOS pixel resolution
-    x = 1272
+    x = 1280
     y = 1024
     
     # LCOS-SML monitor number setting 
@@ -76,17 +108,20 @@ def main():
 
     # make the 8bit unsigned integer array type
     FARRAY = c_uint8 * array_size
+    print(type(FARRAY))
 
     # make the 8bit unsigned integer array instance
     # initialize the array - element 0
     farray = FARRAY(0) 
     
     
-    directory = "test/test-folder-1-bmp" 
+    directory = "C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/test/test-folder-5-bmps" 
     x = 1280  
     y = 800  
     results = processMultipleImages(directory, x, y)
+    # farray = results[0]
+    showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, results[0])
 
-    for i, result in enumerate(results):
-        print(f"Processed image {i+1}, output array shape: {result.shape}")
-    
+
+
+main()
