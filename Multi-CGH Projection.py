@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 from ctypes import *
 import copy
+import ctypes
 
 def makeBmpArray(filepath, x, y, outArray):
     im = Image.open(filepath)
@@ -16,7 +17,7 @@ def makeBmpArray(filepath, x, y, outArray):
             outArray[i + imageWidth * j] = im_gray.getpixel((i, j)) 
 
     # Lcoslib = windll.LoadLibrary("Image_Control.dll")  # 根据你的平台选择正确的LoadLibrary方法
-    Lcoslib = windll.LoadLibrary("Image_Control.dll") 
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll") 
     
     # Create CGH
     inArray = copy.deepcopy(outArray) 
@@ -52,7 +53,8 @@ def showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array):
     Window_Array_to_Display = Lcoslib.Window_Array_to_Display
     Window_Array_to_Display.argtypes = [c_void_p, c_int, c_int, c_int, c_int]
     Window_Array_to_Display.restype = c_int
-    Window_Array_to_Display(array, x, y, windowNo, x*y)
+    Window_Array_to_Display(array.ctypes.data_as(ctypes.c_void_p), x, y, windowNo, x*y)
+    # Window_Array_to_Display(ctypes.cast(array, ctypes.POINTER(ctypes.c_ubyte)), x, y, windowNo, x*y)
     
     return 0
 
@@ -69,13 +71,13 @@ def processMultipleImages(directory, x, y):
             cgh_array = makeBmpArray(filepath, x, y, outArray)
             
             # 存储生成的CGH图像
-            results.append(outArray)
+            results.append(cgh_array)
         
     return results
 
 def displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRate):
     frameInterval = 1 / frameRate
-    Lcoslib = windll.LoadLibrary("Image_Control.dll")
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll")
 
     for array in results:
         showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array)
@@ -90,18 +92,46 @@ def displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRa
     Window_Term.restype = c_int
     Window_Term(windowNo)
 
-# 示例用法
-directory = "path_to_your_bmp_images"  # 替换为你的BMP图像文件夹路径
-x = 1280  # 目标X维度像素数
-y = 800   # 目标Y维度像素数
-monitorNo = 2  # LCOS显示器编号
-windowNo = 1  # 窗口编号
-xShift = 100  # X方向偏移量
-yShift = 100  # Y方向偏移量
-frameRate = 30  # 设定的帧率
 
-# 处理所有图像并生成CGH图像
-results = processMultipleImages(directory, x, y)
+# directory = "C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/test/test-folder-5-bmps" 
+# x = 1280  
+# y = 1024   
+# monitorNo = 2 
+# windowNo = 0  
+# xShift = 0  
+# yShift = 0  
+# frameRate = 1 
 
-# 按照帧率显示CGH图像
-displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRate)
+# results = processMultipleImages(directory, x, y)
+# displayCGHImages(results, monitorNo, windowNo, x, xShift, y, yShift, frameRate)
+
+
+# import time
+
+def display_images_with_frame_rate(images, frame_rate=30):
+    num_images = len(images)
+    sleep_time = 1 / frame_rate
+    
+    for i, image_array in enumerate(images):
+        print(f"Displaying image {i+1}/{num_images}")
+        showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, image_array)
+        time.sleep(sleep_time)
+        print(i + 1)
+
+# 在main函数末尾添加显示逻辑
+if __name__ == "__main__":
+    directory = "C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/test/test-folder-5-bmps" 
+    x = 1280  
+    y = 1024   
+    monitorNo = 2 
+    windowNo = 0  
+    xShift = 0  
+    yShift = 0  
+    frameRate = 1 
+    results = processMultipleImages(directory, x, y)
+    
+    
+    try:
+        display_images_with_frame_rate(results, frame_rate=1) 
+    except KeyboardInterrupt:
+        print("Display interrupted by user.")
