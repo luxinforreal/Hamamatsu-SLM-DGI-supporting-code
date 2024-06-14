@@ -3,19 +3,19 @@
  * @version: 1.0
  * @Author: luxin
  * @Date: 2024-06-10 23:10:25
- * @LastEditTime: 2024-06-13 18:39:46
+ * @LastEditTime: 2024-06-13 20:29:17
 -->
 # D:\Github\Hamamatsu SLM-DGI-supporting-code
 
  Hamamatsu SLM-DGI-supporting-code
 
 '''
-test1.py
+test1.py - 测试原来的基本功能是否可以实现
 
 1. 直接载入无衍射光场-Mathiue&Gauss光场的bmp相位图 - def loadBmpArray(filepath, x, y, outArray)
 2. 生成无衍射光场-Mathiue&Gauss光场的bmp相位图(计算CGH图) - def loadBmpArray(filepath, x, y, outArray)
 
-test2.py
+test2.py - 测试自己的代码是否可以显示一张自己图片到屏幕上面(5°)
 
 1-修改逻辑,不在函数内部进行图像的反转操作,外部将bmp提前处理成flatten的结构
 2-将bmp预处理成flatten存储在arr中,DGI算法单独提供接口, 对应的存储方式都需要改变(存储图片的命名)
