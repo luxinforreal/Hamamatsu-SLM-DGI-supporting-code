@@ -40,7 +40,7 @@ farray = FARRAY(0)
 
 
 def showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array):
-    Lcoslib = windll.LoadLibrary("D:\\python_project\\Image_Control.dll")
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll")
 
     # Select LCOS window
     Window_Settings = Lcoslib.Window_Settings
@@ -74,7 +74,7 @@ int y: Pixel number of y-dimension
 '''
 def makeAxiconLensArray(top, pitch, x, y, array):
     #Lcoslib = cdll.LoadLibrary("Image_Control.dll") #for cdll
-    Lcoslib = windll.LoadLibrary("D:\\python_project\\Image_Control.dll") #for windll
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll") #for windll
     AxiconLens = Lcoslib.AxiconLens
     AxiconLens.argtyes = [c_double, c_int, c_int, c_int, c_void_p, c_void_p]
     AxiconLens.restype = c_int
