@@ -103,7 +103,8 @@ import cv2
 
 data = values
 bucket = data
-ghost = np.zeros((800, 1280))
+# ghost = np.zeros((800, 1280))
+ghost = np.zeros((1024, 1280))
 bucket_sum = 0
 sum_field = ghost+ 0.00001
 corr_sum = ghost
