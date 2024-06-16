@@ -34,7 +34,7 @@ def makeBmpArray(filepath, x, y, outArray):
             outArray[i + imageWidth * j] = im_gray.getpixel((i, j)) 
 
     # Lcoslib = cdll.LoadLibrary("Image_Control.dll")
-    Lcoslib = windll.LoadLibrary("Image_Control.dll") 
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll") 
     
     # Create CGH
     inArray = copy.deepcopy(outArray) 
@@ -81,7 +81,7 @@ def makeBmpArrayFromFlattenedArray(x, y, outArray):
     imageHeight = 1024
     
     # Lcoslib = cdll.LoadLibrary("Image_Control.dll")
-    Lcoslib = windll.LoadLibrary("Image_Control.dll") 
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll") 
     
     # Create CGH
     inArray = copy.deepcopy(outArray) 
@@ -124,7 +124,7 @@ def loadBmpArray(filepath, x, y, outArray):
             outArray[i + imageWidth * j] = im_gray.getpixel((i, j)) 
 
     # Lcoslib = cdll.LoadLibrary("Image_Control.dll")
-    Lcoslib = windll.LoadLibrary("D:\\python_project\\Image_Control.dll") 
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll") 
     # #
     # # # Create CGH
     # # inArray = copy.deepcopy(outArray)
@@ -169,7 +169,7 @@ def loadBmpArrayFromFlattenedArray(x, y, outArray):
     #         outArray[i + imageWidth * j] = im_gray.getpixel((i, j)) 
 
     # Lcoslib = cdll.LoadLibrary("Image_Control.dll")
-    Lcoslib = windll.LoadLibrary("Image_Control.dll") 
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll") 
     # #
     # # # Create CGH
     # # inArray = copy.deepcopy(outArray)
@@ -268,7 +268,7 @@ def processMultipleImages(directory, x, y):
     8bit unsigned int array array: output array
 '''
 def showOn2ndDisplay(monitorNo, windowNo, x, xShift, y, yShift, array):
-    Lcoslib = windll.LoadLibrary("Image_Control.dll")
+    Lcoslib = windll.LoadLibrary("C:/Users/allen/Desktop/Hamamatsu-SLM-DGI-supporting-code/Image_Control.dll")
     
     #Select LCOS window
     Window_Settings = Lcoslib.Window_Settings
