@@ -1,6 +1,6 @@
 '''
 Descripttion: The Complete Code for SLM_DGI(Contains the testing code)
-version: 1.0
+version: 1.1
 Author: luxin
 Date: 2024-06-08 20:07:10
 LastEditTime: 2024-06-13 18:23:36
