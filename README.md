@@ -32,7 +32,8 @@
 4.2024/06/16 20:51:00 test content  
 
 1. 测试是否可以生成，对应的npy文件进行投影；
-2. 测试成功，则队Mathiue光场的文件使用makeBmpArray进行.npy文件的生成  
+2. 测试改变帧率是否可以一直投影，10Hz，20Hz(SLM最多好像支持20Hz速率的投影)
+3. 测试成功，则队Mathiue光场的文件使用makeBmpArray进行.npy文件的生成  
 
 5.2024/06/16 21:51:00 test content  
 
