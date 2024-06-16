@@ -8,6 +8,7 @@ LastEditTime: 2024-06-13 18:23:36
 from PIL import Image
 import numpy as np
 from ctypes import *
+import matplotlib.pyplot as plt
 
 import os
 import cv2
@@ -307,7 +308,7 @@ def ghost_imaging(image_data, bucket, result_save_path, target, speckle_size, nu
     if num_images != len(image_data):
         raise ValueError("Number of images provided does not match specified num_images.")
     
-    x = 1272
+    x = 1280
     y = 1024
     
     ghost = np.zeros((y, x))
@@ -343,6 +344,60 @@ def ghost_imaging(image_data, bucket, result_save_path, target, speckle_size, nu
     DGI_temp0 = Image.fromarray(DGI_temp0.astype('uint8')).convert('L')
     DGI_temp0.save(result_save_path + '%s_DGI_n1500_s%s.bmp' % (target, speckle_size))
 
+
+def compute_ghost_imaging(data, img_data, result_save_path, target, speckle_size):
+    """
+    Perform Differential Ghost Imaging (DGI) on the provided data and save intermediate and final results.
+
+    Parameters:
+    data (ndarray): 1D array of bucket values.
+    img_data (ndarray): 3D array of image data with shape (num_images, height, width).
+    result_save_path (str): Path where the result images will be saved.
+    target (str): Target identifier for the saved files.
+    speckle_size (str): Speckle size identifier for the saved files.
+    """
+    # Initialize parameters and arrays
+    ghost = np.zeros((1024, 1280))
+    bucket_sum = 0
+    sum_field = ghost + 0.00001
+    corr_sum = ghost
+    number_sum = 0
+    ghost_sum = ghost
+    number_sum = 0
+    plt.ion()
+
+    # Loop through each image and perform DGI calculations
+    for i in range(np.size(data)):
+        image = img_data[i]
+        img = image.astype('float64')
+        sum_field += img
+        number = np.sum(img)
+        number_sum += number
+        mean_number = number_sum / (i + 1)
+        
+        print(i)
+
+        # Differential GI
+        mean_field = sum_field / (i + 1)
+        bucketDebug = data[i]
+        bucket_sum += bucketDebug
+        mean_bucket = bucket_sum / (i + 1)
+        ghost_sum += ((img / mean_field - 1) * (bucketDebug - (mean_bucket * number / mean_number)))
+        ghost_final = ghost_sum / (i + 1)
+
+        if i % 250 == 0 and i != 0:  
+            DGI_temp1 = 255 - ghost_final
+            DGI_temp1 -= np.min(DGI_temp1)
+            DGI_temp1 = DGI_temp1 * 255 / np.max(DGI_temp1)
+            DGI_temp1 = Image.fromarray(DGI_temp1.astype('uint8')).convert('L')
+            DGI_temp1.save(f"{result_save_path}{target}_TGI_n{i}_s{speckle_size}.bmp")
+    
+    # Save the final ghost image
+    DGI_temp0 = 255 - ghost_final
+    DGI_temp0 -= np.min(DGI_temp0)
+    DGI_temp0 = DGI_temp0 * 255 / np.max(DGI_temp0)
+    DGI_temp0 = Image.fromarray(DGI_temp0.astype('uint8')).convert('L')
+    DGI_temp0.save(f"{result_save_path}{target}_DGI_n{np.size(data)}_s{speckle_size}.bmp")
 
 
 
