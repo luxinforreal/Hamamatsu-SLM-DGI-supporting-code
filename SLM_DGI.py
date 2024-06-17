@@ -345,6 +345,16 @@ def ghost_imaging(image_data, bucket, result_save_path, target, speckle_size, nu
     DGI_temp0.save(result_save_path + '%s_DGI_n1500_s%s.bmp' % (target, speckle_size))
 
 
+
+from daqmx import NIDAQmxInstrument, AnalogInput
+daq = NIDAQmxInstrument()
+values = daq.ai0.capture(
+    sample_count=1500, rate=20,
+    max_voltage=10.0, min_voltage=0,
+    # mode='differential', 
+    timeout=75.0 #75@1500 100@2000
+    )
+
 def compute_ghost_imaging(data, img_data, result_save_path, target, speckle_size):
     """
     Perform Differential Ghost Imaging (DGI) on the provided data and save intermediate and final results.
@@ -390,7 +400,7 @@ def compute_ghost_imaging(data, img_data, result_save_path, target, speckle_size
             DGI_temp1 -= np.min(DGI_temp1)
             DGI_temp1 = DGI_temp1 * 255 / np.max(DGI_temp1)
             DGI_temp1 = Image.fromarray(DGI_temp1.astype('uint8')).convert('L')
-            DGI_temp1.save(f"{result_save_path}{target}_TGI_n{i}_s{speckle_size}.bmp")
+            DGI_temp1.save(f"{result_save_path}{target}_TGI_n{i}_t{}.bmp")
     
     # Save the final ghost image
     DGI_temp0 = 255 - ghost_final
