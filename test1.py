@@ -11,6 +11,8 @@ import numpy as np
 import cv2
 from PIL import Image
 
+Light_field_type = "Mathiue"
+
 size = 1500 
 
 #ref_path = "C:/Users/allen/Desktop/intensity patterns/random16"
@@ -213,8 +215,8 @@ def compute_ghost_imaging(data, img_data, result_save_path, target, speckle_size
             DGI_temp1 -= np.min(DGI_temp1)
             DGI_temp1 = DGI_temp1 * 255 / np.max(DGI_temp1)
             DGI_temp1 = Image.fromarray(DGI_temp1.astype('uint8')).convert('L')
-            DGI_temp1.save(f"{result_save_path}{target}_TGI_n{i}_s{speckle_size}.bmp")
-            DGI_temp1.save(f"")
+            # DGI_temp1.save(f"{result_save_path}{target}_TGI_n{i}_s{speckle_size}.bmp")
+            DGI_temp1.save(f"{target}_DGI_n{i}_{Light_field_type}.bmp")
     # Save the final ghost image
     DGI_temp0 = 255 - ghost_final
     DGI_temp0 -= np.min(DGI_temp0)
