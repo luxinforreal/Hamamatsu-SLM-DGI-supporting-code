@@ -214,7 +214,7 @@ def compute_ghost_imaging(data, img_data, result_save_path, target, speckle_size
             DGI_temp1 = DGI_temp1 * 255 / np.max(DGI_temp1)
             DGI_temp1 = Image.fromarray(DGI_temp1.astype('uint8')).convert('L')
             DGI_temp1.save(f"{result_save_path}{target}_TGI_n{i}_s{speckle_size}.bmp")
-    
+            DGI_temp1.save(f"")
     # Save the final ghost image
     DGI_temp0 = 255 - ghost_final
     DGI_temp0 -= np.min(DGI_temp0)
